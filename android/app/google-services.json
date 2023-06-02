@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "376200423621",
+    "project_id": "bustop-a79c9",
+    "storage_bucket": "bustop-a79c9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:376200423621:android:53c65f85049c45442e68ac",
+        "android_client_info": {
+          "package_name": "com.example.bustop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "376200423621-r1n0i2evgr3amcuf6cn6jj1sdotrfpa4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAphU6ahE4C6q3lt9e1ymLnzui-d89yPmc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "376200423621-r1n0i2evgr3amcuf6cn6jj1sdotrfpa4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:376200423621:android:446524eee5de4c4b2e68ac",
+        "android_client_info": {
+          "package_name": "com.example.bustop_driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "376200423621-r1n0i2evgr3amcuf6cn6jj1sdotrfpa4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAphU6ahE4C6q3lt9e1ymLnzui-d89yPmc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "376200423621-r1n0i2evgr3amcuf6cn6jj1sdotrfpa4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
