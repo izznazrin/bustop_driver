@@ -5,13 +5,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 
 final db = FirebaseFirestore.instance;
-final driverLocationRef = db.collection('driver_locations').doc('driver1');
+final driverLocationRef = db.collection('Driver').doc('driver1');
 
 // Update the driver location in the database
 updateDriverLocation(Position position) {
   GeoPoint geoPoint = GeoPoint(position.latitude, position.longitude);
-  driverLocationRef
-      .set({'location': geoPoint, 'timestamp': FieldValue.serverTimestamp()});
+  driverLocationRef.set(
+      {'driver_location': geoPoint, 'timestamp': FieldValue.serverTimestamp()});
 }
 
 void main() async {
