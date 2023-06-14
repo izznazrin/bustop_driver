@@ -102,8 +102,18 @@ class _BusStatusState extends State<BusStatus> {
     });
   }
 
+  bool isButtonPressed = false;
+
+  String? selectedOption = 'Choose Bus Plate Number';
+  List<String> options = [
+    'Choose Bus Plate Number',
+    'Kolej Kediaman Pewira',
+    'PKU & CARE',
+  ];
+
   @override
   Widget build(BuildContext context) {
+    bool isDestinationChosen = selectedOption != 'Choose Bus Plate Number';
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: Column(
@@ -115,30 +125,17 @@ class _BusStatusState extends State<BusStatus> {
               color: Colors.white,
               child: Row(
                 children: [
-                  /*Container(
-                    margin: EdgeInsets.all(10),
-                    width: 120,
-                    decoration: BoxDecoration(
-                      color: Colors.green.shade100,
-                      border: Border.all(
-                        color: Colors.green,
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'In Bus',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green,
-                        ),
+                  Container(
+                    margin: EdgeInsets.only(left: 16),
+                    child: Text(
+                      'GPS Status:',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
+                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(
@@ -148,53 +145,160 @@ class _BusStatusState extends State<BusStatus> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Center(
-                      child: Text(
-                        '',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
+                      child: StreamBuilder<DocumentSnapshot>(
+                        stream: driverLocationRef?.snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<DocumentSnapshot> snapshot) {
+                          if (snapshot.hasData) {
+                            GeoPoint? driverLocation = (snapshot.data!.data()
+                                    as Map<String, dynamic>?)?[
+                                'driver_location'] as GeoPoint?;
+                            if (driverLocation != null) {
+                              return Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(6.0),
+                                    child: Text(
+                                      '${driverLocation.latitude},${driverLocation.longitude}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
+                          }
+                          return Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Text(
+                              'No Location',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
-                  ),*/
+                  ),
                 ],
               ),
             ),
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Row(
             children: [
-              ElevatedButton(
-                onPressed: startUpdatingLocation,
-                child: Text('Start'),
-              ),
-              ElevatedButton(
-                onPressed: stopUpdatingLocation,
-                child: Text('Stop'),
-              ),
-              StreamBuilder<DocumentSnapshot>(
-                stream: driverLocationRef?.snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<DocumentSnapshot> snapshot) {
-                  if (snapshot.hasData) {
-                    GeoPoint? driverLocation = (snapshot.data!.data()
-                            as Map<String, dynamic>?)?['driver_location']
-                        as GeoPoint?;
-                    if (driverLocation != null) {
-                      return Column(
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.all(20),
+                  child: Material(
+                    elevation: 4,
+                    borderRadius: BorderRadius.circular(15),
+                    child: Padding(
+                      padding: EdgeInsets.all(15),
+                      child: Row(
                         children: [
-                          Text('Latitude: ${driverLocation.latitude}'),
-                          Text('Longitude: ${driverLocation.longitude}'),
+                          Icon(
+                            Icons.location_pin,
+                            size: 40,
+                            color: Colors.blue,
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: IgnorePointer(
+                              ignoring: isButtonPressed,
+                              child: Opacity(
+                                opacity: isButtonPressed ? 0.5 : 1.0,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.grey,
+                                      width: 2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: DropdownButton<String>(
+                                    value: selectedOption,
+                                    onChanged: isButtonPressed
+                                        ? null // Disable the dropdown button if button is pressed
+                                        : (String? newValue) {
+                                            setState(
+                                              () {
+                                                selectedOption = newValue;
+                                                isDestinationChosen =
+                                                    selectedOption !=
+                                                        'Choose Bus Plate Number';
+                                              },
+                                            );
+                                          },
+                                    underline:
+                                        Container(), // Remove the default underline
+                                    items:
+                                        options.map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              value,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ).toList(),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
-                      );
-                    }
-                  }
-                  return Text('No location available');
-                },
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
+          if (isDestinationChosen)
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  isButtonPressed = true;
+                });
+                startUpdatingLocation();
+              },
+              child: Text('Start'),
+            ),
+
+          if (isDestinationChosen)
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  isButtonPressed = false;
+                });
+                stopUpdatingLocation();
+              },
+              child: Text('Stop'),
+            ),
+          // Column(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+          //     ElevatedButton(
+          //       onPressed: startUpdatingLocation,
+          //       child: Text('Start'),
+          //     ),
+          //     ElevatedButton(
+          //       onPressed: stopUpdatingLocation,
+          //       child: Text('Stop'),
+          //     ),
+          //   ],
+          // ),
         ],
       ),
     );
