@@ -83,8 +83,10 @@ class _TemplateState extends State<Template> {
         onTap: _navigateBottomBar,
         type: BottomNavigationBarType.fixed,
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.directions_bus), label: 'Bus Status'),
-          BottomNavigationBarItem(icon: Icon(Icons.emoji_people), label: 'Passenger'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.directions_bus), label: 'Bus Status'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.emoji_people), label: 'Passenger'),
         ],
       ),
     );

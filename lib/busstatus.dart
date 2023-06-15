@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 
 class BusStatus extends StatefulWidget {
-  const BusStatus({super.key});
+  const BusStatus({Key? key}) : super(key: key);
 
   @override
   State<BusStatus> createState() => _BusStatusState();
@@ -24,6 +24,13 @@ class _BusStatusState extends State<BusStatus> {
       db = FirebaseFirestore.instance;
       driverLocationRef = db!.collection('Driver').doc('driver1');
     });
+    fetchOptionsFromFirebase();
+  }
+
+  @override
+  void dispose() {
+    stopUpdatingLocation();
+    super.dispose();
   }
 
   void startUpdatingLocation() async {
@@ -105,11 +112,32 @@ class _BusStatusState extends State<BusStatus> {
   bool isButtonPressed = false;
 
   String? selectedOption = 'Choose Bus Plate Number';
-  List<String> options = [
-    'Choose Bus Plate Number',
-    'Kolej Kediaman Pewira',
-    'PKU & CARE',
-  ];
+  List<String> options = ['Choose Bus Plate Number'];
+
+  void fetchOptionsFromFirebase() {
+    FirebaseFirestore.instance
+        .collection('Bus')
+        .get()
+        .then((QuerySnapshot snapshot) {
+      List<String> fetchedOptions = ['Choose Bus Plate Number'];
+      print('Number of documents retrieved: ${snapshot.docs.length}');
+      snapshot.docs.forEach((DocumentSnapshot doc) {
+        String? plateNumber = (doc.data()
+            as Map<String, dynamic>?)?['bus_platenumber'] as String?;
+        print('Plate number: $plateNumber');
+        if (plateNumber != null) {
+          fetchedOptions.add(plateNumber);
+        }
+      });
+
+      setState(() {
+        options = fetchedOptions;
+      });
+    }).catchError((error) {
+      // Handle the error
+      print('Error retrieving options from Firebase: $error');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -201,7 +229,7 @@ class _BusStatusState extends State<BusStatus> {
                       child: Row(
                         children: [
                           Icon(
-                            Icons.location_pin,
+                            Icons.directions_bus,
                             size: 40,
                             color: Colors.blue,
                           ),
@@ -222,7 +250,7 @@ class _BusStatusState extends State<BusStatus> {
                                   child: DropdownButton<String>(
                                     value: selectedOption,
                                     onChanged: isButtonPressed
-                                        ? null // Disable the dropdown button if button is pressed
+                                        ? null // Disable the dropdown button if the button is pressed
                                         : (String? newValue) {
                                             setState(
                                               () {
@@ -275,7 +303,6 @@ class _BusStatusState extends State<BusStatus> {
               },
               child: Text('Start'),
             ),
-
           if (isDestinationChosen)
             ElevatedButton(
               onPressed: () {
@@ -286,19 +313,6 @@ class _BusStatusState extends State<BusStatus> {
               },
               child: Text('Stop'),
             ),
-          // Column(
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   children: [
-          //     ElevatedButton(
-          //       onPressed: startUpdatingLocation,
-          //       child: Text('Start'),
-          //     ),
-          //     ElevatedButton(
-          //       onPressed: stopUpdatingLocation,
-          //       child: Text('Stop'),
-          //     ),
-          //   ],
-          // ),
         ],
       ),
     );
