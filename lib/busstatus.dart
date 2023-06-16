@@ -1,3 +1,4 @@
+import 'package:bustop_driver/passenger.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -196,7 +197,7 @@ class _BusStatusState extends State<BusStatus> {
                                           '${driverLocation.latitude},${driverLocation.longitude}',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 13,
+                                            fontSize: 10,
                                           ),
                                         ),
                                       ),
@@ -384,7 +385,63 @@ class _BusStatusState extends State<BusStatus> {
                         margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
                         child: ElevatedButton(
                           onPressed: () {
-                            // Code to execute when the button is pressed
+                            // Fetch the list of bus plate numbers from Firestore
+                            FirebaseFirestore.instance
+                                .collection('Bus')
+                                .get()
+                                .then((QuerySnapshot querySnapshot) {
+                              List<String> busPlateNumbers = [];
+                              querySnapshot.docs.forEach((doc) {
+                                busPlateNumbers.add(doc['bus_platenumber']);
+                              });
+
+                              // Show a dialog with the list of bus plate numbers
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text(
+                                        'Select Bus Plate Number to Delete'),
+                                    content: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: busPlateNumbers.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return ListTile(
+                                          title: Text(busPlateNumbers[index]),
+                                          onTap: () {
+                                            // Delete the selected bus plate number from Firestore
+                                            FirebaseFirestore.instance
+                                                .collection('Bus')
+                                                .where('bus_platenumber',
+                                                    isEqualTo:
+                                                        busPlateNumbers[index])
+                                                .get()
+                                                .then((QuerySnapshot snapshot) {
+                                              snapshot.docs.forEach((doc) {
+                                                doc.reference.delete();
+                                              });
+                                            });
+
+                                            Navigator.of(context)
+                                                .pop(); // Close the dialog
+                                          },
+                                        );
+                                      },
+                                    ),
+                                    actions: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .pop(); // Close the dialog
+                                        },
+                                        child: Text('Cancel'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            });
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
@@ -480,7 +537,11 @@ class _BusStatusState extends State<BusStatus> {
                               height: 120,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  setState(() {});
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Passenger()),
+                                  );
                                 },
                                 child: Text(
                                   'View Passenger List',
