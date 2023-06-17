@@ -104,9 +104,9 @@ class _BusStatusState extends State<BusStatus> {
 
   void updateDriverLocation(Position position) {
     GeoPoint geoPoint = GeoPoint(position.latitude, position.longitude);
-    driverLocationRef?.set({
+    driverLocationRef?.update({
       'driver_location': geoPoint,
-      'timestamp': FieldValue.serverTimestamp()
+      //'timestamp': FieldValue.serverTimestamp()
     });
   }
 
@@ -265,6 +265,17 @@ class _BusStatusState extends State<BusStatus> {
                                                     isDestinationChosen =
                                                         selectedOption !=
                                                             'Choose Bus Plate Number';
+
+                                                    if (selectedOption !=
+                                                        null) {
+                                                      // Update the selected bus plate number in Firestore
+                                                      FirebaseFirestore.instance
+                                                          .collection('Driver')
+                                                          .doc('driver1')
+                                                          .update({
+                                                        'bus_id': selectedOption
+                                                      });
+                                                    }
                                                   },
                                                 );
                                               },
@@ -341,9 +352,10 @@ class _BusStatusState extends State<BusStatus> {
                                         // Add the bus plate number to Firestore
                                         FirebaseFirestore.instance
                                             .collection('Bus')
-                                            .doc()
+                                            .doc(busPlateNumber)
                                             .set({
-                                          'bus_platenumber': busPlateNumber
+                                          'bus_platenumber': busPlateNumber,
+                                          'bus_numberpassenger': 0
                                         });
 
                                         Navigator.of(context)
