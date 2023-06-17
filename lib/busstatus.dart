@@ -314,16 +314,18 @@ class _BusStatusState extends State<BusStatus> {
                               builder: (BuildContext context) {
                                 String busPlateNumber =
                                     ''; // Variable to hold the entered bus plate number
-
                                 return AlertDialog(
                                   title: Text('Insert Bus Plate Number'),
-                                  content: TextField(
-                                    onChanged: (value) {
-                                      busPlateNumber =
-                                          value; // Update the bus plate number as the user types
-                                    },
-                                    decoration: InputDecoration(
-                                      hintText: 'Enter Bus Plate Number',
+                                  content: Container(
+                                    height: 20,
+                                    child: TextField(
+                                      onChanged: (value) {
+                                        busPlateNumber =
+                                            value; // Update the bus plate number as the user types
+                                      },
+                                      decoration: InputDecoration(
+                                        hintText: 'Enter Bus Plate Number',
+                                      ),
                                     ),
                                   ),
                                   actions: [
