@@ -1,9 +1,11 @@
 import 'package:bustop_driver/passenger.dart';
+import 'package:bustop_driver/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class BusStatus extends StatefulWidget {
   const BusStatus({Key? key}) : super(key: key);
@@ -17,6 +19,7 @@ class _BusStatusState extends State<BusStatus> {
   DocumentReference? driverLocationRef;
   StreamSubscription<Position>? locationSubscription;
   bool isUpdatingLocation = false;
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   void initState() {
@@ -146,6 +149,43 @@ class _BusStatusState extends State<BusStatus> {
   Widget build(BuildContext context) {
     bool isDestinationChosen = selectedOption != 'Choose Bus Plate Number';
     return Scaffold(
+      appBar: AppBar(
+        title: Center(child: Text('Bus Status')),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Profile()),
+              );
+            },
+            icon: Icon(Icons.person),
+          ),
+        ],
+      ),
+      drawer: Drawer(
+        child: Container(
+          color: Colors.grey[300],
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('sign in as: ' + user.email!),
+              MaterialButton(
+                onPressed: () {
+                  FirebaseAuth.instance.signOut();
+                },
+                color: Colors.blue,
+                child: Text(
+                  'sign out',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
       backgroundColor: Colors.grey[300],
       body: RefreshIndicator(
         onRefresh: _refresh,

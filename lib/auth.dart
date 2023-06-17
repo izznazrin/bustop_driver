@@ -1,7 +1,7 @@
+import 'package:bustop_driver/busstatus.dart';
 import 'package:bustop_driver/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'template.dart';
 
 class Auth extends StatelessWidget {
   const Auth({super.key});
@@ -13,7 +13,7 @@ class Auth extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return Template();
+            return BusStatus();
           } else {
             return Login();
           }
