@@ -12,6 +12,7 @@ class _PassengerState extends State<Passenger> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
+      
     );
   }
 }

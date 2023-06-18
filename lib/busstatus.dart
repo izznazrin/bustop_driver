@@ -333,6 +333,7 @@ class _BusStatusState extends State<BusStatus> {
                                                   value,
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
+                                                    fontSize: 13,
                                                   ),
                                                 ),
                                               ),
