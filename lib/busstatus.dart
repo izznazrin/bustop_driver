@@ -396,7 +396,6 @@ class _BusStatusState extends State<BusStatus> {
                                             .doc(busPlateNumber)
                                             .set({
                                           'bus_platenumber': busPlateNumber,
-                                          'bus_numberpassenger': 0
                                         });
 
                                         Navigator.of(context)
